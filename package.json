@@ -1,0 +1,15 @@
+{
+  "name": "quartr-edgar",
+  "private": true,
+  "workspaces": [
+    "server",
+    "shared",
+    "web"
+  ],
+  "scripts": {
+    "start": "bun run --parallel dev:server dev:web",
+    "dev:server": "bun run --cwd server dev",
+    "dev:web": "bun run --cwd web dev",
+    "test": "bun test server web research"
+  }
+}

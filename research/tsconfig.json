@@ -1,0 +1,9 @@
+{
+  "extends": "../server/tsconfig.json",
+  "compilerOptions": {
+    "typeRoots": ["../server/node_modules/@types"],
+    "noUnusedLocals": true,
+    "noUnusedParameters": true
+  },
+  "include": ["src", "test", "scripts"]
+}

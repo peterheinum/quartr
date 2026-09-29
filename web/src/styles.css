@@ -1,0 +1,203 @@
+/*
+ * Plain CSS, deliberately unopinionated: system fonts, a neutral palette, and
+ * enough structure to keep a dense table legible. Tokens live in :root so the
+ * whole thing can be retuned from one place.
+ */
+
+:root {
+  --bg: #ffffff;
+  --panel: #fafafa;
+  --border: #d9dde2;
+  --border-strong: #b6bdc6;
+  --text: #16191d;
+  --muted: #6b7280;
+  --accent: #10508c;
+  --accent-bg: #eaf2f9;
+  --warn-bg: #fdf6e3;
+  --warn-border: #e6d9a8;
+  --warn-text: #7a6320;
+  --error-bg: #fdecec;
+  --error-border: #f0bcbc;
+  --error-text: #9b2323;
+  --radius: 4px;
+
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.app { max-width: 1180px; margin: 0 auto; padding: 24px 16px 64px; }
+
+h1 { font-size: 20px; margin: 0 0 4px; }
+h2 { font-size: 15px; margin: 0 0 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+.subtitle { color: var(--muted); margin: 0 0 24px; }
+
+section { margin-bottom: 32px; }
+
+/* ---------- panels ---------- */
+.panel {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+}
+.panel-header {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  background: var(--panel);
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.panel-body { padding: 14px; }
+
+/* ---------- controls ---------- */
+.controls { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end; }
+.field { display: flex; flex-direction: column; gap: 4px; }
+.field > label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+
+input[type="text"], input[type="search"], select, button {
+  font: inherit;
+  color: inherit;
+  padding: 6px 9px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--bg);
+}
+input:focus-visible, select:focus-visible, button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+button { cursor: pointer; }
+button:hover:not(:disabled) { background: var(--panel); }
+button:disabled { opacity: .5; cursor: default; }
+button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+/* Same trap as the selected chip: button:hover is more specific than
+   button.primary, so the background must be restated here or a hovered
+   primary button turns near-white while its text stays white. */
+button.primary:hover:not(:disabled) {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  filter: brightness(1.15);
+}
+
+label.check { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; cursor: pointer; }
+
+/* Typeahead */
+.typeahead { position: relative; }
+.typeahead-results {
+  position: absolute; z-index: 10; top: calc(100% + 2px); left: 0; min-width: 300px;
+  margin: 0; padding: 0; list-style: none;
+  background: var(--bg); border: 1px solid var(--border-strong); border-radius: var(--radius);
+  box-shadow: 0 4px 14px rgba(0,0,0,.09); max-height: 280px; overflow-y: auto;
+}
+.typeahead-results li > button {
+  display: block; width: 100%; text-align: left; border: 0; border-radius: 0; background: none; padding: 7px 10px;
+}
+.typeahead-results li > button:hover, .typeahead-results li > button[aria-selected="true"] { background: var(--accent-bg); }
+.typeahead-results .ticker { font-weight: 600; margin-right: 8px; }
+.typeahead-results .name { color: var(--muted); }
+
+/* Form-type chips */
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  padding: 3px 9px; font-size: 13px; border-radius: 999px;
+  border: 1px solid var(--border-strong); background: var(--bg);
+}
+.chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+/* The generic button:hover rule is more specific than .chip[aria-pressed],
+   so without this a hovered selected chip gets a near-white background while
+   keeping white text, and its label vanishes. Hover darkens instead. */
+.chip[aria-pressed="true"]:hover:not(:disabled) {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  filter: brightness(1.15);
+}
+.chip .count { opacity: .65; margin-left: 5px; font-variant-numeric: tabular-nums; }
+
+/* ---------- tables ---------- */
+table { width: 100%; border-collapse: collapse; }
+th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+th { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); font-weight: 600; white-space: nowrap; }
+tbody tr:hover { background: var(--panel); }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+td.date { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.table-scroll { overflow-x: auto; }
+
+th.sortable > button {
+  border: 0; background: none; padding: 0; font: inherit; color: inherit;
+  text-transform: inherit; letter-spacing: inherit; cursor: pointer;
+}
+th.sortable > button:hover { color: var(--text); }
+
+a { color: var(--accent); }
+.tag {
+  display: inline-block; padding: 1px 6px; border-radius: 3px;
+  background: var(--accent-bg); color: var(--accent);
+  font-size: 12px; font-weight: 600; white-space: nowrap;
+}
+.tag.muted { background: var(--panel); color: var(--muted); }
+.raw-form { color: var(--muted); font-size: 12px; margin-left: 6px; }
+
+/* ---------- status ---------- */
+.notice { padding: 9px 12px; border-radius: var(--radius); border: 1px solid; font-size: 13px; }
+.notice.info  { background: var(--warn-bg); border-color: var(--warn-border); color: var(--warn-text); }
+.notice.error { background: var(--error-bg); border-color: var(--error-border); color: var(--error-text); }
+.empty { padding: 32px 14px; text-align: center; color: var(--muted); }
+.muted { color: var(--muted); }
+.spinner-text { color: var(--muted); font-size: 13px; }
+
+.pagination { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-top: 1px solid var(--border); flex-wrap: wrap; }
+.pagination .spacer { flex: 1; }
+
+/* The summary's latest-10-K cell carries a second explanatory line for
+   foreign private issuers ("No 10-K · files 20-F ..."), which overflowed the
+   column. Give it room and let it wrap. */
+td.latest-annual { min-width: 190px; white-space: normal; }
+td.latest-annual .fallback { display: block; margin-top: 2px; font-size: 12px; }
+
+/* Keep every control on the same baseline; the checkbox and button were
+   sitting below the fields they belong beside. */
+.controls > .field,
+.controls > label.check,
+.controls > button { align-self: flex-end; }
+.controls > label.check { padding-bottom: 7px; }
+
+/* The summary's per-row remove control. Quiet until hovered, so it does not
+   compete with the data, but unmistakably a button once you reach for it. */
+button.remove {
+  border-color: transparent;
+  background: none;
+  color: var(--muted);
+  line-height: 1;
+  padding: 2px 7px;
+}
+button.remove:hover {
+  border-color: var(--error-border);
+  background: var(--error-bg);
+  color: var(--error-text);
+}
+
+/* ---------- section tabs ---------- */
+.tabs { height: 44px; box-sizing: border-box; border-bottom: 1px solid var(--border); background: var(--panel); }
+.tabs-inner { height: 100%; max-width: 1180px; margin: 0 auto; padding: 0 16px; display: flex; gap: 4px; align-items: stretch; }
+.tab {
+  border: 0;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  background: transparent;
+  padding: 10px 14px;
+  color: var(--muted);
+}
+.tab:hover:not(:disabled) { background: transparent; color: var(--text); }
+.tab[aria-current="page"] { color: var(--text); border-bottom-color: var(--accent); font-weight: 600; }
